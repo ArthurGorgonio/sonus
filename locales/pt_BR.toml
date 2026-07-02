@@ -1,0 +1,14 @@
+hello = "Bem-vindo ao Sonus"
+
+
+[interface]
+base_freq = "Insira a frequência padrão, em heartz para representar o A4 (o padrão é 440 Hz)."
+note = "Nota"
+semitons = "Semitons (n)"
+frequency = "Frequencia (Hz)"
+
+[chords]
+question = "Qual acorde foi tocado?"
+right = "Correto."
+incorrect = "Incorreto. O acorde correto era %{answer}."
+

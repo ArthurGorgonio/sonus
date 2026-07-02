@@ -1,0 +1,20 @@
+[package]
+#name = "sonus"
+name = "sonus-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bench]]
+name = "audio_generation"
+path = "benches/audio_generation.rs"
+harness = false # Required: Disables standard test harness so Criterion can run
+
+
+[dependencies]
+rodio.workspace = true
+rust-i18n.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true

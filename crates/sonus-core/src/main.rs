@@ -1,7 +1,23 @@
 use rodio::source::{SineWave, Source};
 use rodio::{DeviceSinkBuilder, Player};
+use rust_i18n::t;
 use std::io::{self, Write};
 use std::time::Duration;
+
+rust_i18n::i18n!("../../locales/", fallback = "pt_BR");
+
+pub fn render_welcome_message() -> String {
+    t!("hello").to_string()
+}
+
+pub fn check_answer(user_guess: &str, correct_answer: &str) -> String {
+    if user_guess == correct_answer {
+        t!("theory.correct").to_string()
+    } else {
+        // Nested lookup with variable injection
+        t!("theory.incorrect", answer = correct_answer).to_string()
+    }
+}
 
 pub struct Note {
     pub frequency: f32,
@@ -24,20 +40,21 @@ impl Note {
 }
 
 fn main() {
+    rust_i18n::set_locale("pt_BR");
     let duration = 1.0;
 
     // _stream must live as long as the sink
     let handle = DeviceSinkBuilder::open_default_sink().expect("open default audio stream");
     let player = Player::connect_new(handle.mixer());
 
-    println!("Welcome to Sonus.");
+    println!("{}", t!("hello"));
 
     /*
      ******************************************
      ** select the basic tone
      ******************************************
      */
-    print!("Enter the default frequency in heartz to represent the A4 (default is 440 Hz). ");
+    print!("{}", t!("interface.base_freq"));
     io::stdout().flush().unwrap();
 
     let mut freq_str: String = String::new();
@@ -69,8 +86,10 @@ fn main() {
     ];
 
     println!(
-        "{:<6} | {:<12} | {:<14}",
-        "Note", "Semitones (n)", "Frequency (Hz)"
+        "{:^6} | {:^12} | {:^14}",
+        t!("interface.note"),
+        t!("interface.semitons"),
+        t!("interface.frequency")
     );
     println!("{:-<40}", "");
 
@@ -116,7 +135,7 @@ fn main() {
      ** guess note
      ******************************************
      */
-    print!("What note was played? ");
+    print!("{}", t!("chords.question"));
     io::stdout().flush().unwrap();
 
     let mut answer: String = String::new();
@@ -137,5 +156,21 @@ fn main() {
         } else {
             println!("You miss, the note was A4.");
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_locale_switching() {
+        // Force locale to Spanish for testing
+        rust_i18n::set_locale("pt_BR");
+        assert_eq!(render_welcome_message(), "Bem-vindo ao Sonus!");
+
+        // Switch back to English
+        rust_i18n::set_locale("en");
+        assert_eq!(render_welcome_message(), "Welcome to Sonus!");
     }
 }
